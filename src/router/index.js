@@ -14,6 +14,11 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/inner',
+    name: 'Home',
+    component: ()=> import('@/views/inner'),
   }
 ];
 
