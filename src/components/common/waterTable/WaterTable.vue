@@ -1,12 +1,12 @@
 <template>
   <div class="waterTable">
-    <div class="table-box" :class="composing.hv=='h'?'horizontal':''">
-      <p class="text">单位:mm</p>
-      <ul class="table-list" :class="[isCenter=='1'?'textCenter':'',composing.direction=='right'?'right':'']" :style="{width:totalwidth+'px',height:totalheight+'px'}">
+    <div class="table-box" :class="composing.hv=='h'?'horizontal':'vertical'">
+      <p class="text" v-if='showUnit'>单位:mm</p>
+      <ul class="table-list" :class="[isCenter=='1'?'textCenter':'',composing.directionH?'':'top',composing.directionV?'':'left']" :style="{width:totalwidth+'px',height:totalheight+'px'}">
         <li class="table-item" 
           v-for="(item, index) in list" 
           :key="index" 
-          :style="{ background: item.color,width:size.width+'px',height:size.height+'px'}"
+          :style="{ background: item.color,width:size.width,height:size.height}"
           >
           <em>{{ item.num }}</em>
         </li>
@@ -36,7 +36,8 @@ export default {
       default (){
         return{
           hv: 'v', //vertical、horizontal
-          direction: 'right',
+          directionH: 0,
+          directionV: 0,
         }
       } 
     },
@@ -49,6 +50,10 @@ export default {
           height : '20px',
         }
       }
+    },
+    showUnit:{
+      type:Boolean,
+      default : true
     }
   },
   data() {
@@ -59,11 +64,11 @@ export default {
   computed: {
     //根据数量计算总宽度
     totalwidth(){
-      return this.composing.hv=='h'?((+this.size.width+1)*(+this.list.length)+1):(+this.size.width+2)
+      return this.composing.hv=='h'?((Number(this.size.width.split('px')[0])+1)*(+this.list.length)+1):(Number(this.size.width.split('px')[0])+2)
     },
     //根据数量计算总高度
     totalheight(){
-      return this.composing.hv=='h'?(+this.size.height+2):((+this.size.height+1)*(+this.list.length)+1)
+      return this.composing.hv=='h'?(+Number(this.size.height.split('px')[0])+2):((+Number(this.size.height.split('px')[0])+1)*(+this.list.length)+1)
     }
   },
   //监控data中的数据变化
@@ -78,18 +83,22 @@ export default {
 </script>
 <style lang="less" scoped>
 /* @import url(); 引入公共css类 */
+.waterTable{
+  // display: flex;
+  // align-content: center;
+  // align-items: center;
+}
 .table-box {
   position: relative;
-  width: auto;
-  height: auto;
-  margin-left: 35px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   p{
     white-space: nowrap; 
     font-size: 13px;
 	  color: #000000;
-    margin-left: -.5em;
+    // margin-left: -6px;
     margin-bottom: 5px;
   }
   ul {
@@ -98,18 +107,20 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column-reverse;
-    border: 1px solid #000000;
+    margin-left: -20px;
     li {
       flex: 1;
       position: relative;
-      border-top: 1px solid #000000;
+      border: 1px solid #000000;
+      border-top: none;
       &:last-of-type{
-        border-top: none;
+        border-top: 1px solid #000000;
       }
       em {
         position: absolute;
         width: 100%;
-        height: 106%;
+        // height: 106%;
+        height: 130%;
         left: 140%;
         font-size: 14px;
         line-height: 14px;
@@ -125,11 +136,13 @@ export default {
       li{
         em{
           justify-content: center;
+          height: 106%;
         }
       }
     }
     //控制字体左右显示
-    &.right{
+    &.left{
+      margin-left: 20px;
       li{
         em{
           left: auto;
@@ -143,7 +156,6 @@ export default {
   &.horizontal{
     flex-direction: row-reverse;
     align-items: center;
-    margin:30px auto 0;
     justify-content: center;
     p{
       margin-left: 10px;
@@ -151,21 +163,19 @@ export default {
     }
     ul{
       flex-direction: row;
+      margin: auto;
       li {
-        flex: 1;
-        position: relative;
-        border-top: none;
-        border-right: 1px solid #000000;
-        &:last-of-type{
-          border-right: none;
+        border-left: none;    
+        border-top:1px solid #000000;
+        &:first-of-type{
+          border-left: 1px solid #000000;
         }
         em {
-          position: absolute;
-          width: 100%;
           height: 100%;
           left: -50%;
           right: auto;
-          top: 106%;
+          // top: 106%;
+          top: 135%;
           text-align: center;
           justify-content: center;
         }
@@ -178,12 +188,13 @@ export default {
           }
         }
       }
-      //控制字体左右显示
-      &.right{
+      //控制字体上下显示
+      &.top{
         li{
           em{
             top: auto;
-            bottom: 106%;
+            // bottom: 106%;
+            bottom: 135%;
           }
         }
       }
